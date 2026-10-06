@@ -1,0 +1,35 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: setup java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: install cordova
+      run: npm install -g cordova
+
+    - name: Generate APK
+      run: ./generate_apk.sh
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: claude_mobile.apk
+        path: claude_mobile.apk

@@ -32,6 +32,10 @@ This interface does **not** use a pirated or reverse-engineered API. It uses the
 
 Because browsers have security rules (CORS), you cannot simply open the `index.html` file directly. You must run it from a **local web server**. I've made this easy for you.
 
+### 📱 Mobile Android Application
+
+You can generate an Android APK for this application. To generate the APK using Cordova, see the instructions in `generate_apk.md`.
+
 ### ✅ Prerequisites
 
 This project has minimal dependencies, making it very easy to set up. All you need is:
