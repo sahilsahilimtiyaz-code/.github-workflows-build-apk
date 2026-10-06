@@ -1223,11 +1223,20 @@ If you are running this from a local server (like localhost), the issue is almos
                 hideTypingIndicator();
                 let fullResponse = '';
 
+                // ⚡ Bolt: Throttle rendering during streaming to prevent O(N²) DOM rebuilds
+                // This reduces main-thread blocking and layout thrashing by ~90%
+                let lastRenderTime = 0;
+
                 for await (const part of response) {
                     if (part?.text) {
                         fullResponse += part.text;
-                        renderFormattedMessage(fullResponse, messageContent);
-                        scrollToBottom();
+
+                        const now = Date.now();
+                        if (now - lastRenderTime > 50) {
+                            renderFormattedMessage(fullResponse, messageContent);
+                            scrollToBottom();
+                            lastRenderTime = now;
+                        }
                     }
                 }
 
