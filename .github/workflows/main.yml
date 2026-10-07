@@ -21,7 +21,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -37,13 +36,13 @@ jobs:
             exit 1
           fi
 
+      # Bolt: Enabling native Gradle caching (by removing cache-disabled: true) speeds up CI
+      # build times significantly by reusing downloaded dependencies and the build cache.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-disabled: true
 
       - name: Build APK
-        run: ./gradlew :app:assembleDebug --no-daemon
+        run: ./gradlew :app:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
