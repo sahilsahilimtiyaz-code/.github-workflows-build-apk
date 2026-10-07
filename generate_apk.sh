@@ -5,17 +5,21 @@ then
     npm install -g cordova
 fi
 
-# Create a new Cordova project
-cordova create claude_mobile com.hassanmsthf11.claude Claude
+# Create a new Cordova project if it doesn't exist
+if [ ! -d "claude_mobile" ]; then
+    cordova create claude_mobile com.hassanmsthf11.claude Claude
+fi
 
 # Copy the HTML file into the www directory as index.html
 cp "unlimited claude/Claude.html" claude_mobile/www/index.html
 
-# Inject cordova.js into the html to enable plugins
-sed -i 's/<\/body>/<script src="cordova.js"><\/script><\/body>/' claude_mobile/www/index.html
+# Inject cordova.js into the html to enable plugins (if not already there)
+if ! grep -q "cordova.js" claude_mobile/www/index.html; then
+    sed -i 's/<\/body>/<script src="cordova.js"><\/script><\/body>/' claude_mobile/www/index.html
+fi
 
 # Remove the default cordova js logic since this is a self-contained app
-rm claude_mobile/www/js/index.js
+rm -f claude_mobile/www/js/index.js
 
 # Modify the config.xml to set correct SDK versions and allow network access
 cat << 'CONFIGEOF' > claude_mobile/config.xml
@@ -39,8 +43,8 @@ cat << 'CONFIGEOF' > claude_mobile/config.xml
 CONFIGEOF
 
 cd claude_mobile
-cordova plugin add cordova-plugin-inappbrowser
-cordova platform add android@13.0.0
+cordova plugin add cordova-plugin-inappbrowser || true
+cordova platform add android@13.0.0 || true
 cordova build android
 
 # Copy the resulting APK out
