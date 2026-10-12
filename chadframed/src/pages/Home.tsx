@@ -42,6 +42,13 @@ export const Home = () => {
               >
                 ACCESS PROTOCOLS
               </Link>
+              <a
+                href="/CHADFRAMED-Storefront-App.apk"
+                download
+                className="mt-4 border border-electric text-electric font-jetbrains font-bold text-sm tracking-[0.05em] py-4 px-8 inline-flex justify-center items-center hover:bg-electric hover:text-obsidian transition-colors sm:col-span-2 md:col-span-1"
+              >
+                DOWNLOAD ANDROID APP
+              </a>
             </div>
           </div>
 
