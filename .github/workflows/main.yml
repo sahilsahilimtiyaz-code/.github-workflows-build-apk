@@ -52,7 +52,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          candidate="$(find . -type f \( -name 'settings.gradle' -o -name 'settings.gradle.kts' -o -name 'build.gradle' -o -name 'build.gradle.kts' \) | head -n 1 || true)"
+
+          candidate="$(find . -type f -name 'gradlew' | sort | head -n 1 || true)"
+          if [ -z "$candidate" ]; then
+            candidate="$(find . -type f \( -name 'settings.gradle' -o -name 'settings.gradle.kts' \) | sort | head -n 1 || true)"
+          fi
 
           if [ -z "$candidate" ]; then
             echo "No Gradle/Android project files were found in the repository."
@@ -71,13 +75,25 @@ jobs:
           cache-disabled: true
 
       - name: Build APK
-        working-directory: ${{ steps.gradle_project.outputs.project_dir }}
         env:
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
-          chmod +x ./gradlew
-          ./gradlew :app:assembleDebug --no-daemon --stacktrace --info
+          set -euo pipefail
+
+          project_dir="${{ steps.gradle_project.outputs.project_dir }}"
+
+          if [ -x "$project_dir/gradlew" ]; then
+            chmod +x "$project_dir/gradlew"
+            "$project_dir/gradlew" :app:assembleDebug --no-daemon --stacktrace --info
+          else
+            if [ ! -f ./gradlew ]; then
+              echo "No gradlew wrapper found at repository root or project directory: $project_dir"
+              exit 1
+            fi
+            chmod +x ./gradlew
+            ./gradlew -p "$project_dir" :app:assembleDebug --no-daemon --stacktrace --info
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
