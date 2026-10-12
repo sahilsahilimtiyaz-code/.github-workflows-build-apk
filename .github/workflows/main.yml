@@ -23,14 +23,27 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          components: |
-            cmdline-tools;latest
-            platform-tools
-            platforms;android-35
-            build-tools;35.0.0
+      - name: Install Android SDK and required components
+        shell: bash
+        env:
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          set -euxo pipefail
+          sudo mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+          sudo chmod -R 777 "$ANDROID_SDK_ROOT"
+
+          curl -fsSL -o /tmp/cmdline-tools.zip \
+            https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+
+          unzip -q /tmp/cmdline-tools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          if [ -d "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" ]; then
+            sudo rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+            sudo mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          fi
+
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
+            --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Validate Gradle project
         run: |
@@ -46,6 +59,9 @@ jobs:
           cache-disabled: true
 
       - name: Build APK
+        env:
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+          ANDROID_HOME: /usr/local/lib/android/sdk
         run: ./gradlew :app:assembleDebug --no-daemon
 
       - name: Upload APK
