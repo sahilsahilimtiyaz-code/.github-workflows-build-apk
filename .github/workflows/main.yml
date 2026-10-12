@@ -42,8 +42,10 @@ jobs:
             sudo mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
           fi
 
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
+          set +o pipefail
+          yes 2>/dev/null | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
             --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          set -o pipefail
 
       - name: Validate Gradle project
         run: |
