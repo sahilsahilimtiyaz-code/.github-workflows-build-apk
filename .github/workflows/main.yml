@@ -48,9 +48,10 @@ jobs:
           set -o pipefail
 
       - name: Validate Gradle project
+        working-directory: chadframed/android
         run: |
           if [ ! -f "settings.gradle" ] && [ ! -f "settings.gradle.kts" ] && [ ! -f "build.gradle" ] && [ ! -f "build.gradle.kts" ]; then
-            echo "No Gradle/Android project files were found in this repository."
+            echo "No Gradle/Android project files were found in chadframed/android."
             echo "Please check out the Android project repository or add the app sources before running the build."
             exit 1
           fi
@@ -61,14 +62,17 @@ jobs:
           cache-disabled: true
 
       - name: Build APK
+        working-directory: chadframed/android
         env:
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
           ANDROID_HOME: /usr/local/lib/android/sdk
-        run: ./gradlew :app:assembleDebug --no-daemon
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: OctaKeyclick-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: chadframed/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
