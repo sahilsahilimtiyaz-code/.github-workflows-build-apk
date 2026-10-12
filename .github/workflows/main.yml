@@ -53,18 +53,26 @@ jobs:
         run: |
           set -euo pipefail
 
-          candidate="$(find . -type f -name 'gradlew' | sort | head -n 1 || true)"
-          if [ -z "$candidate" ]; then
-            candidate="$(find . -type f \( -name 'settings.gradle' -o -name 'settings.gradle.kts' \) | sort | head -n 1 || true)"
+          project_dir=""
+          if [ -f "chadframed/android/gradlew" ]; then
+            project_dir="chadframed/android"
+          elif [ -f "android/gradlew" ]; then
+            project_dir="android"
+          else
+            candidate="$(find . -type f -path '*/gradlew' | sort | head -n 1 || true)"
+            if [ -z "$candidate" ]; then
+              candidate="$(find . -type f \( -name 'settings.gradle' -o -name 'settings.gradle.kts' \) | sort | head -n 1 || true)"
+            fi
+
+            if [ -z "$candidate" ]; then
+              echo "No Gradle/Android project files were found in the repository."
+              echo "Please check out the Android project or add the app sources before running the build."
+              exit 1
+            fi
+
+            project_dir="$(dirname "$candidate")"
           fi
 
-          if [ -z "$candidate" ]; then
-            echo "No Gradle/Android project files were found in the repository."
-            echo "Please check out the Android project or add the app sources before running the build."
-            exit 1
-          fi
-
-          project_dir="$(dirname "$candidate")"
           echo "project_dir=$project_dir" >> "$GITHUB_OUTPUT"
           echo "Found Gradle project at: $project_dir"
           ls -la "$project_dir"
@@ -86,13 +94,12 @@ jobs:
           if [ -x "$project_dir/gradlew" ]; then
             chmod +x "$project_dir/gradlew"
             "$project_dir/gradlew" :app:assembleDebug --no-daemon --stacktrace --info
-          else
-            if [ ! -f ./gradlew ]; then
-              echo "No gradlew wrapper found at repository root or project directory: $project_dir"
-              exit 1
-            fi
+          elif [ -f ./gradlew ]; then
             chmod +x ./gradlew
             ./gradlew -p "$project_dir" :app:assembleDebug --no-daemon --stacktrace --info
+          else
+            echo "No gradlew wrapper found at repository root or project directory: $project_dir"
+            exit 1
           fi
 
       - name: Upload APK
