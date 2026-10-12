@@ -23,19 +23,26 @@ jobs:
           java-version: '17'
           cache: gradle
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and build web
+        working-directory: chadframed
+        run: |
+          npm install
+          npm run build
+
+      - name: Sync Capacitor
+        working-directory: chadframed
+        run: npx cap sync android
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Install Android SDK 35
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
-      - name: Validate Gradle project
-        run: |
-          if [ ! -f "settings.gradle" ] && [ ! -f "settings.gradle.kts" ] && [ ! -f "build.gradle" ] && [ ! -f "build.gradle.kts" ]; then
-            echo "No Gradle/Android project files were found in this repository."
-            echo "Please check out the Android project repository or add the app sources before running the build."
-            exit 1
-          fi
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -43,11 +50,12 @@ jobs:
           cache-disabled: true
 
       - name: Build APK
-        run: ./gradlew :app:assembleDebug --no-daemon
+        working-directory: chadframed/android
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OctaKeyclick-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: ChadFramed-debug-apk
+          path: chadframed/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
