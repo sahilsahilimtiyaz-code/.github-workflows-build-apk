@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">ChadFramed</string>
-    <string name="title_activity_main">ChadFramed</string>
-    <string name="package_name">com.chadframed.app</string>
-    <string name="custom_url_scheme">com.chadframed.app</string>
-</resources>
