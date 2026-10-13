@@ -5,7 +5,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore } from '../store/useCartStore';
 
 export const Checkout = () => {
-  const { items, getTotal, clearCart } = useCartStore();
+  // ⚡ Bolt: Use specific selectors to prevent unnecessary component re-renders
+  const items = useCartStore((state) => state.items);
+  const getTotal = useCartStore((state) => state.getTotal);
+  const clearCart = useCartStore((state) => state.clearCart);
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
