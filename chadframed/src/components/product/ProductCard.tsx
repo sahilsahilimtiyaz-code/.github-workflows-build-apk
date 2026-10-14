@@ -8,7 +8,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { addItem } = useCartStore();
+  // ⚡ Bolt Performance Optimization: Use specific selector to prevent unnecessary re-renders when other store values change
+  const addItem = useCartStore((state) => state.addItem);
 
   return (
     <div className="group relative bg-charcoal border border-border overflow-hidden flex flex-col h-full">

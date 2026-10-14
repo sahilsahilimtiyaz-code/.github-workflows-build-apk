@@ -9,7 +9,8 @@ import { useCartStore } from '../store/useCartStore';
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCartStore();
+  // ⚡ Bolt Performance Optimization: Use specific selectors to prevent unnecessary re-renders when other store values change
+  const addItem = useCartStore((state) => state.addItem);
 
   const product = products.find(p => p.slug === slug);
 
