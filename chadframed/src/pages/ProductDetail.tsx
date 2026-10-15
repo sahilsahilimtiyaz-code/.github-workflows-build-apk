@@ -9,7 +9,7 @@ import { useCartStore } from '../store/useCartStore';
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCartStore();
+  const addItem = useCartStore((state) => state.addItem);
 
   const product = products.find(p => p.slug === slug);
 
