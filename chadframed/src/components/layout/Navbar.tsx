@@ -9,7 +9,10 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { items, openCart } = useCartStore();
+
+  // ⚡ Bolt: Destructured Zustand store using specific selectors to minimize unnecessary O(N) re-renders
+  const items = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
