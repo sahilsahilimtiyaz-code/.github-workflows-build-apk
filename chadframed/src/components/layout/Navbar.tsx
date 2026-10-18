@@ -9,7 +9,10 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { items, openCart } = useCartStore();
+  // ⚡ Bolt: Use specific selector for Zustand store to prevent unnecessary O(N) re-renders
+  // Expected impact: Prevents this component from re-rendering when other cart state changes
+  const items = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 

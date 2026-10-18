@@ -4,7 +4,14 @@ import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 
 export const CartDrawer = () => {
-  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore();
+  // ⚡ Bolt: Use specific selectors for Zustand store to prevent unnecessary O(N) re-renders
+  // Expected impact: Prevents this component from re-rendering when other cart state changes
+  const isOpen = useCartStore((state) => state.isOpen);
+  const closeCart = useCartStore((state) => state.closeCart);
+  const items = useCartStore((state) => state.items);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const getTotal = useCartStore((state) => state.getTotal);
   const navigate = useNavigate();
 
   const handleCheckout = () => {
