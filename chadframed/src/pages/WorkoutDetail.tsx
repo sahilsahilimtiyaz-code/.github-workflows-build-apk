@@ -7,7 +7,8 @@ import { useCartStore } from '../store/useCartStore';
 export const WorkoutDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCartStore();
+  // Bolt Performance: Specific Zustand selectors prevent O(N) re-renders
+  const addItem = useCartStore((state) => state.addItem);
 
   const program = products.find(p => p.slug === slug && p.type === 'digital');
 
