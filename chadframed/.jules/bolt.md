@@ -1,0 +1,3 @@
+## 2024-05-14 - Zustand O(N) Re-renders with Destructuring
+**Learning:** Destructuring the entire Zustand store (e.g., `const { items, getTotal } = useCartStore()`) causes components to subscribe to *all* state changes in the store. In this codebase, it led to widespread unnecessary re-renders whenever any unrelated state (like `isOpen`) was updated.
+**Action:** Always use specific selector functions (e.g., `const items = useCartStore((state) => state.items)`) instead of destructuring the whole store to prevent unnecessary O(N) re-renders in components.
