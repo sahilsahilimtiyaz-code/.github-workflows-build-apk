@@ -4,12 +4,19 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, User } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { items, openCart } = useCartStore();
+  // ⚡ Bolt: Use useShallow to prevent unnecessary re-renders when other store state changes
+  const { items, openCart } = useCartStore(
+    useShallow((state) => ({
+      items: state.items,
+      openCart: state.openCart,
+    }))
+  );
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
