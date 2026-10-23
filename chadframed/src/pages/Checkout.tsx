@@ -2,10 +2,20 @@ import { useState } from "react";
 
 
 import { useNavigate, Link } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { useCartStore } from '../store/useCartStore';
 
 export const Checkout = () => {
-  const { items, getTotal, clearCart } = useCartStore();
+  // ⚡ Bolt Performance Optimization:
+  // Using `useShallow` ensures Checkout only re-renders when these specific properties change.
+  // Impact: Prevents re-renders of the entire complex checkout form when unrelated cart state (like `isOpen`) changes.
+  const { items, getTotal, clearCart } = useCartStore(
+    useShallow((state) => ({
+      items: state.items,
+      getTotal: state.getTotal,
+      clearCart: state.clearCart,
+    }))
+  );
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);

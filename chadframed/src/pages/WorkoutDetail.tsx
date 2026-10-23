@@ -7,7 +7,11 @@ import { useCartStore } from '../store/useCartStore';
 export const WorkoutDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCartStore();
+  // ⚡ Bolt Performance Optimization:
+  // Using a specific selector instead of destructuring the whole store
+  // prevents unnecessary re-renders when other cart state changes.
+  // Impact: Improves runtime efficiency and reactivity.
+  const addItem = useCartStore((state) => state.addItem);
 
   const program = products.find(p => p.slug === slug && p.type === 'digital');
 
