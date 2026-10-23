@@ -3,13 +3,21 @@ import { useState, useEffect } from "react";
 
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, User } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { useCartStore } from '../../store/useCartStore';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { items, openCart } = useCartStore();
+
+  // ⚡ Bolt Performance Optimization:
+  // Using `useShallow` ensures Navbar only re-renders when `items` or `openCart` actually change,
+  // preventing unnecessary renders when other store state (like `isOpen`) is updated.
+  // Impact: Prevents Navbar jitter/re-renders when opening/closing the cart drawer.
+  const { items, openCart } = useCartStore(
+    useShallow((state) => ({ items: state.items, openCart: state.openCart }))
+  );
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
