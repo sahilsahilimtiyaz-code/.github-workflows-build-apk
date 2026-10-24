@@ -1,6 +1,9 @@
 
 import { Link } from 'react-router-dom';
 
+// Ensure stable constant outside render loop to maintain component purity
+const currentYear = new Date().getFullYear();
+
 export const Footer = () => {
   return (
     <footer className="border-t border-border bg-charcoal pt-24 pb-12 mt-32">
@@ -40,7 +43,7 @@ export const Footer = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-24 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center font-jetbrains text-xs text-outline">
-        <p>&copy; {new Date().getFullYear()} CHADFRAMED. ALL RIGHTS RESERVED.</p>
+        <p>&copy; {currentYear} CHADFRAMED. ALL RIGHTS RESERVED.</p>
         <div className="flex space-x-6 mt-4 md:mt-0">
           <a href="#" className="hover:text-on-surface transition-colors">INSTAGRAM</a>
           <a href="#" className="hover:text-on-surface transition-colors">TWITTER</a>

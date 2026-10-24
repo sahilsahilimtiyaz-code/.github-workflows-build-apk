@@ -9,7 +9,9 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { items, openCart } = useCartStore();
+  // Optimization: Use selectors to prevent re-renders on unrelated store changes
+  const items = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -20,10 +22,6 @@ export const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
 
   const navLinks = [
     { name: 'SHOP', path: '/shop' },
@@ -102,6 +100,7 @@ export const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`font-syne text-3xl font-bold tracking-tight transition-colors ${
                 location.pathname === link.path ? 'text-electric text-shadow-glow' : 'text-on-surface'
               }`}
@@ -111,6 +110,7 @@ export const Navbar = () => {
           ))}
           <Link
             to="/account"
+            onClick={() => setIsMobileMenuOpen(false)}
             className="font-jetbrains text-sm tracking-widest text-on-surface-variant hover:text-electric transition-colors mt-8"
           >
             ACCOUNT

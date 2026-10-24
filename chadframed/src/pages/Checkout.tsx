@@ -2,10 +2,18 @@ import { useState } from "react";
 
 
 import { useNavigate, Link } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import { useCartStore } from '../store/useCartStore';
 
 export const Checkout = () => {
-  const { items, getTotal, clearCart } = useCartStore();
+  // Optimization: useShallow prevents re-renders when other store properties change
+  const { items, getTotal, clearCart } = useCartStore(
+    useShallow((state) => ({
+      items: state.items,
+      getTotal: state.getTotal,
+      clearCart: state.clearCart,
+    }))
+  );
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);

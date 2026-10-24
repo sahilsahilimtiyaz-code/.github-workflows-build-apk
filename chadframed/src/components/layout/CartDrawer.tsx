@@ -1,10 +1,21 @@
 
 import { useNavigate } from 'react-router-dom';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import { useCartStore } from '../../store/useCartStore';
 
 export const CartDrawer = () => {
-  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore();
+  // Optimization: useShallow prevents re-renders when other store properties change
+  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore(
+    useShallow((state) => ({
+      isOpen: state.isOpen,
+      closeCart: state.closeCart,
+      items: state.items,
+      updateQuantity: state.updateQuantity,
+      removeItem: state.removeItem,
+      getTotal: state.getTotal,
+    }))
+  );
   const navigate = useNavigate();
 
   const handleCheckout = () => {
