@@ -1,9 +1,11 @@
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
 export const OrderConfirmation = () => {
-  const orderNumber = `CF-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`;
+  // Use state initializer callback to prevent impure calls during render
+  const [orderNumber] = useState(() => `CF-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`);
 
   return (
     <div className="min-h-screen bg-obsidian pt-32 pb-24 flex items-center justify-center">
