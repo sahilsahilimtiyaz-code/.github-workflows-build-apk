@@ -2,9 +2,22 @@
 import { useNavigate } from 'react-router-dom';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const CartDrawer = () => {
-  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore();
+  // ⚡ Bolt Performance Optimization:
+  // Using useShallow prevents unnecessary re-renders when other unselected
+  // properties in the store change, as it checks for shallow equality of the selected properties.
+  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore(
+    useShallow((state) => ({
+      isOpen: state.isOpen,
+      closeCart: state.closeCart,
+      items: state.items,
+      updateQuantity: state.updateQuantity,
+      removeItem: state.removeItem,
+      getTotal: state.getTotal,
+    }))
+  );
   const navigate = useNavigate();
 
   const handleCheckout = () => {

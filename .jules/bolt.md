@@ -2,3 +2,7 @@
 **Learning:** Translating Google Stitch tokens directly into a Tailwind configuration requires careful mapping of abstract tokens (e.g., `surface-container-highest`) to usable utility classes. For consistency, extending the `colors` theme in Tailwind directly with these keys is highly effective and eliminates mapping errors throughout components. Additionally, incorporating explicit custom brand names from the `designMd` like `electric` and `ice` makes the classes much more readable than repeating generic variables.
 
 **Action:** When working with Design System data (like Stitch or Figma tokens), extract the defined colors/typography and map them explicitly into `tailwind.config.js` *before* starting component scaffolding to ensure global consistency from day 1. Also, pre-configuring specific utility classes like `.hide-scrollbar` and `.box-shadow-glow` in `index.css` is better than inline variants for highly reusable effects.
+
+## 2023-10-24 - Zustand Store Destructuring Anti-pattern
+**Learning:** Destructuring the entire Zustand store (e.g., `const { addItem } = useCartStore();`) causes components to re-render whenever *any* state in the store changes, even if the component doesn't use the changed state. This creates unnecessary O(N) re-renders, especially when multiple components read from the same store.
+**Action:** Always use specific selector functions (e.g., `useCartStore((state) => state.addItem)`) or `useShallow` from `zustand/react/shallow` (when accessing multiple properties) to prevent these re-renders and improve performance.
