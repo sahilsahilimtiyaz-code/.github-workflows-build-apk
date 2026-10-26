@@ -2,9 +2,20 @@
 import { useNavigate } from 'react-router-dom';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const CartDrawer = () => {
-  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore();
+  // ⚡ Bolt: Use useShallow to prevent O(N) re-renders when accessing multiple store properties
+  const { isOpen, closeCart, items, updateQuantity, removeItem, getTotal } = useCartStore(
+    useShallow((state) => ({
+      isOpen: state.isOpen,
+      closeCart: state.closeCart,
+      items: state.items,
+      updateQuantity: state.updateQuantity,
+      removeItem: state.removeItem,
+      getTotal: state.getTotal,
+    }))
+  );
   const navigate = useNavigate();
 
   const handleCheckout = () => {
